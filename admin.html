@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin - Signal</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:Arial;text-align:center;padding:30px}
+    button{font-size:24px;padding:12px 24px;margin:10px;border-radius:8px;border:0;cursor:pointer}
+    .red{background:red;color:white}
+    .yellow{background:gold;color:black}
+    .green{background:green;color:white}
+    #status{margin-top:20px}
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <h1>Signal kontrol (Admin)</h1>
+  <div id="userArea">
+    <button id="loginBtn">Log ind med Google</button>
+    <div id="status"></div>
+  </div>
+
+  <div id="controls" style="display:none">
+    <button class="red" onclick="setColor('red')">RØD</button>
+    <button class="yellow" onclick="setColor('yellow')">GUL</button>
+    <button class="green" onclick="setColor('green')">GRØN</button>
+    <div id="current" style="margin-top:20px"></div>
+    <div style="margin-top:20px"><button onclick="logout()">Log ud</button></div>
+  </div>
+
+<script>
+  var firebaseConfig = {
+    apiKey: "DIN_API_KEY",
+    authDomain: "DIN_PROJECT.firebaseapp.com",
+    databaseURL: "https://DIN_PROJECT.firebaseio.com",
+    projectId: "DIN_PROJECT",
+    storageBucket: "DIN_PROJECT.appspot.com",
+    messagingSenderId: "DIN_SENDER_ID",
+    appId: "DIN_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const dbRef = firebase.database().ref('color');
+
+  const loginBtn = document.getElementById('loginBtn');
+  const status = document.getElementById('status');
+  const controls = document.getElementById('controls');
+  const current = document.getElementById('current');
+
+  loginBtn.onclick = () => {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(e=>status.textContent = 'Fejl: '+e.message);
+  };
+
+  auth.onAuthStateChanged(user=>{
+    if(user){
+      status.textContent = 'Logget ind som ' + user.email;
+      loginBtn.style.display='none';
+      controls.style.display='block';
+    }else{
+      status.textContent = 'Ikke logget ind';
+      loginBtn.style.display='inline-block';
+      controls.style.display='none';
+    }
+  });
+
+  function setColor(color){
+    dbRef.set({color: color}).catch(e=>alert('Fejl: '+e.message));
+  }
+
+  function logout(){ auth.signOut(); }
+
+  dbRef.on('value', snap=>{
+    const v = snap.val();
+    if(v && v.color){
+      current.textContent = 'Nuværende farve: ' + v.color.toUpperCase();
+    }
+  });
+</script>
+
+</body>
+</html>
