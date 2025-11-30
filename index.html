@@ -31,11 +31,15 @@ var firebaseConfig = {
   var dbRef = firebase.database().ref('color');
 
   function setBg(color){
-    document.getElementById('box').style.background = color;
-    const label = document.querySelector('.label');
-    label.textContent = (color === 'red'?'Lillehal':(color==='yellow'?'Lillehal':'Lillehal'));
-    if(color==='yellow') label.style.color='black'; else label.style.color='white';
+  document.getElementById('box').style.background = color;
+  const label = document.querySelector('.label');
+  label.textContent = "Lillehal";
+  if(color === 'yellow') {
+    label.style.color = 'black';
+  } else {
+    label.style.color = 'white';
   }
+}
 
   dbRef.on('value', function(snap){
     var val = snap.val();
