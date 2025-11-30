@@ -33,7 +33,7 @@ var firebaseConfig = {
   function setBg(color){
     document.getElementById('box').style.background = color;
     const label = document.querySelector('.label');
-    label.textContent = (color === 'red'?'RØD':(color==='yellow'?'GUL':'GRØN'));
+    label.textContent = (color === 'red'?'Lillehal':(color==='yellow'?'Lillehal':'Lillehal'));
     if(color==='yellow') label.style.color='black'; else label.style.color='white';
   }
 
